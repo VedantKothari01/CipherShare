@@ -4,43 +4,65 @@ CipherShare is an ongoing project aimed at building a decentralized, secure clou
 
 ## Project Overview
 
-This project is in its early phases, focusing on building a robust and secure cloud storage system. The architecture will be modular, using microservices for scalability and reliability. The system will support secure, decentralized storage and encrypted access for users.
+This project is in its early phases, focusing on building a robust and secure cloud storage system. The architecture is modular, using independent microservices for scalability and reliability. The system supports secure, decentralized storage and encrypted access for users, with each microservice handling a distinct domain (User, File, Sharing, and Audit).
 
 ## Current Status
-- **Phase 1**: Project synopsis, initial architecture planning, and database design.
-- **Entity-Relationship Diagram (ERD)**: The first version of the ERD is under development, focusing on key entities and their relationships.
-- **Microservices Design**: Initial planning of independent services is in progress.
+
+- **Phase 1**: Completed the project synopsis, initial architecture planning, and database design along with the Entity-Relationship Diagram (ERD).
+- **Phase 2**: Core microservices have been developed, including:
+  - **User Service**: Manages user registration, authentication, and profile management.
+  - **File Service**: Handles file metadata and versioning, with inter-service communication to log audit records.
+  - **Sharing Service**: Manages file sharing permissions and access.
+  - **Audit Service**: Records blockchain-style audit logs for file actions.
 
 ## Technologies to be Used
-- **Microservices Architecture**: Java/Spring Boot, Spring Cloud
-- **Database**: MySQL/PostgreSQL, Hibernate ORM
-- **Containerization & Orchestration**: Docker, Kubernetes
-- **API Communication**: RESTful APIs, RabbitMQ/Kafka
-- **Security**: Spring Security, OAuth 2.0, HTTPS
-- **Deployment**: Jenkins, Helm
-- **Monitoring**: Prometheus, Grafana
+
+- **Microservices Architecture**: Java 23, Spring Boot, Spring Cloud
+- **Database**: MySQL 8, Hibernate ORM (Spring Data JPA)
+- **Containerization & Orchestration**: Docker, Kubernetes (planned for future phases)
+- **API Communication**: RESTful APIs, OpenFeign (for inter-service calls)
+- **Security**: Spring Security, OAuth 2.0, HTTPS (to be enhanced in future phases)
+- **Deployment**: Jenkins, Helm (planned for future phases)
+- **Monitoring**: Prometheus, Grafana (planned for future phases)
 - **Version Control**: Git (GitHub)
 
 ## Project Phases
 
 ### Phase 1: Synopsis & ERD
-- **Synopsis Document**: Includes the project’s problem statement, objectives, scope, technologies, and expected outcomes.
-- **Entity-Relationship Diagram (ERD)**: A draft ERD will define entities and relationships, with normalization practices being implemented.
 
-### Next Steps
-- Finalize microservices architecture and initial database design.
-- Implement first set of microservices (e.g., user management, data storage).
-- Begin Dockerizing services and setting up Kubernetes for orchestration.
+- **Synopsis Document**: Contains the project’s problem statement, objectives, scope, technologies, and expected outcomes.
+- **Entity-Relationship Diagram (ERD)**: A draft ERD defining key entities and relationships, with normalization practices applied.
+
+### Phase 2: Development of Microservices
+
+- **Core Microservices Implemented:**
+  - User Service
+  - File Service
+  - Sharing Service
+  - Audit Service
+- **Implementation Details:**
+  - Spring Data JPA/Hibernate is used for database interactions with MySQL.
+  - Inter-service communication is enabled via OpenFeign.
+  - Each microservice exposes its own REST endpoints, with Swagger API documentation provided through Springdoc OpenAPI.
+
+## Next Steps
+
+- Finalize microservices architecture and refine database design.
+- Enhance inter-service communication and add more business logic.
+- Dockerize the microservices and set up Kubernetes for orchestration in future phases.
+- Implement additional components such as an API Gateway and Eureka Server.
 
 ## Future Enhancements
+
 - Decentralized storage implementation
-- Scalable microservices for file management
+- Further refinement of microservices for file management
 - Enhanced security with multi-factor authentication
 - Real-time access and sharing of encrypted files
+- API Gateway and Eureka Server for service discovery and unified entry point
 
 ## Contributors
+
 - **Vedant Kothari**
 - **Shaurya Patil**
 - **Tanishq Nabar**
 - **Aniruddha Gurjar**
-
