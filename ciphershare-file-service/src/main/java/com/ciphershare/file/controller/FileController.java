@@ -1,0 +1,48 @@
+package com.ciphershare.file.controller;
+
+import com.ciphershare.file.entity.File;
+import com.ciphershare.file.entity.FileVersion;
+import com.ciphershare.file.service.FileService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/files")
+public class FileController {
+    @Autowired
+    private FileService fileService;
+
+    @PostMapping
+    public ResponseEntity<File> createFile(@RequestBody File file) {
+        return ResponseEntity.ok(fileService.createFile(file));
+    }
+
+    @GetMapping("/{fileId}")
+    public ResponseEntity<File> getFile(@PathVariable String fileId) {
+        return ResponseEntity.ok(fileService.getFile(fileId));
+    }
+
+    @PutMapping("/{fileId}")
+    public ResponseEntity<File> updateFile(@PathVariable String fileId, @RequestBody File file) {
+        return ResponseEntity.ok(fileService.updateFile(fileId, file));
+    }
+
+    @DeleteMapping("/{fileId}")
+    public ResponseEntity<Void> deleteFile(@PathVariable String fileId) {
+        fileService.deleteFile(fileId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // File Version Endpoints
+    @PostMapping("/versions")
+    public ResponseEntity<FileVersion> addFileVersion(@RequestBody FileVersion version) {
+        return ResponseEntity.ok(fileService.addFileVersion(version));
+    }
+
+    @GetMapping("/versions/{fileId}")
+    public ResponseEntity<List<FileVersion>> getFileVersions(@PathVariable String fileId) {
+        return ResponseEntity.ok(fileService.getFileVersions(fileId));
+    }
+}
