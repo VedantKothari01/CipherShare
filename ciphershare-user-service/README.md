@@ -3,6 +3,11 @@
 **Purpose:**  
 Handles user registration, authentication, and profile management.
 
+
+## API Documentation
+Once the service is running, you can access the Swagger documentation at:
+[Swagger UI - User Service](http://localhost:8080/swagger-ui.html)
+
 ## Endpoints
 
 - **POST** `/api/users/register`  
