@@ -16,6 +16,7 @@
         <module>ciphershare-file-service</module>
         <module>ciphershare-sharing-service</module>
         <module>ciphershare-audit-service</module>
+        <module>ciphershare-discovery-service</module>
     </modules>
 
     <properties>
