@@ -9,6 +9,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 public class CiphershareUserServiceApplication {
 
+
 	public static void main(String[] args) {
 		SpringApplication.run(CiphershareUserServiceApplication.class, args);
 	}
