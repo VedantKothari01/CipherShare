@@ -13,6 +13,7 @@
         <option value="$PROJECT_DIR$/ciphershare-file-service/pom.xml" />
         <option value="$PROJECT_DIR$/ciphershare-audit-service/pom.xml" />
         <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/ciphershare-discovery-service/pom.xml" />
       </list>
     </option>
   </component>
