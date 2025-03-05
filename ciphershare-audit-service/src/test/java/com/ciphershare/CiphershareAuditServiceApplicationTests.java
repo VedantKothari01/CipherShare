@@ -1,9 +1,10 @@
-package com.ciphershare.ciphershare_audit_service;
+package com.ciphershare;
 
+import com.ciphershare.audit.CiphershareAuditServiceApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@SpringBootTest(classes = CiphershareAuditServiceApplication.class)
 class CiphershareAuditServiceApplicationTests {
 
 	@Test

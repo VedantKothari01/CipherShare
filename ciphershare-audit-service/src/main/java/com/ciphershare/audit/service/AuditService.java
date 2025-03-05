@@ -8,7 +8,6 @@ import java.util.List;
 
 @Service
 public class AuditService {
-    @Autowired
     private BlockchainRecordRepository recordRepository;
 
     public BlockchainRecord addRecord(BlockchainRecord record) {
