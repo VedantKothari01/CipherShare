@@ -4,10 +4,6 @@
 Handles user registration, authentication, and profile management.
 
 
-## API Documentation
-Once the service is running, you can access the Swagger documentation at:
-[Swagger UI - User Service](http://localhost:8080/swagger-ui.html)
-
 ## Endpoints
 
 - **POST** `/api/users/register`  
@@ -33,3 +29,8 @@ Once the service is running, you can access the Swagger documentation at:
 1. Ensure MySQL is running and update the `application.yml` with your DB credentials.
 2. Build: `mvn clean install`
 3. Run: `mvn spring-boot:run`
+
+
+## API Documentation
+Once the service is running, you can access the Swagger documentation at:
+[Swagger UI - User Service](http://localhost:8080/swagger-ui.html)

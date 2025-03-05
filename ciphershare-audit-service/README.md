@@ -17,6 +17,7 @@ Manages blockchain-style immutable audit logs for file actions in CipherShare.
 2. Build: `mvn clean install`
 3. Run: `mvn spring-boot:run`
 
-## Swagger Documentation
 
-- After running, access: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+## API Documentation
+Once the service is running, you can access the Swagger documentation at:
+[Swagger UI - User Service](http://localhost:8080/swagger-ui.html)
