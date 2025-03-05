@@ -36,6 +36,7 @@
 		</dependencies>
 	</dependencyManagement>
 
+
 	<dependencies>
 		<!-- Core Spring Boot starters -->
 		<dependency>
