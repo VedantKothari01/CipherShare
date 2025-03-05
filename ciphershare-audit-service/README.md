@@ -16,3 +16,7 @@ Manages blockchain-style immutable audit logs for file actions in CipherShare.
 1. Configure MySQL in `application.yml`.
 2. Build: `mvn clean install`
 3. Run: `mvn spring-boot:run`
+
+## Swagger Documentation
+
+- After running, access: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
