@@ -33,7 +33,6 @@ public class User {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    // Manual getters and setters in case Lombok isn't working correctly
     public String getUserID() {
         return userID;
     }
