@@ -15,6 +15,7 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
         </processorPath>
         <module name="ciphershare-sharing-service" />
         <module name="ciphershare-file-service" />
@@ -29,6 +30,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="ciphershare-audit-service" options="" />
+      <module name="ciphershare-discovery-service" options="-parameters" />
       <module name="ciphershare-file-service" options="" />
       <module name="ciphershare-sharing-service" options="" />
       <module name="ciphershare-user-service" options="" />
