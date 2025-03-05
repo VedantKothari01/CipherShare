@@ -52,6 +52,12 @@
     </dependencyManagement>
 
     <build>
+        <resources>
+            <resource>
+                <directory>${basedir}/common-config</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -62,4 +68,5 @@
             </plugins>
         </pluginManagement>
     </build>
+
 </project>
