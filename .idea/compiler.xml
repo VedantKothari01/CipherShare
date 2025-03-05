@@ -19,8 +19,16 @@
         </processorPath>
         <module name="ciphershare-sharing-service" />
         <module name="ciphershare-file-service" />
-        <module name="ciphershare-user-service" />
         <module name="ciphershare-audit-service" />
+      </profile>
+      <profile name="Annotation profile for ciphershare-user-service" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+        </processorPath>
+        <module name="ciphershare-user-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
