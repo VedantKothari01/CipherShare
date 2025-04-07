@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sharing-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sharing-service
+  template:
+    metadata:
+      labels:
+        app: sharing-service
+    spec:
+      containers:
+        - name: sharing-service
+          image: ciphershare-sharing-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8084

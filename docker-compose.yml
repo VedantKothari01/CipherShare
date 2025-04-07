@@ -1,0 +1,72 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ciphershare
+      MYSQL_USER: root
+      MYSQL_PASSWORD: Lucifer
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  discovery-service:
+    build: ./ciphershare-discovery-service
+    ports:
+      - "8761:8761"
+    depends_on:
+      - redis
+      - mysql
+
+  api-gateway:
+    build: ./ciphershare-api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - discovery-service
+      - redis
+
+  user-service:
+    build: ./ciphershare-user-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/ciphershare
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Lucifer
+    depends_on:
+      - mysql
+      - discovery-service
+
+  audit-service:
+    build: ./ciphershare-audit-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - discovery-service
+
+  file-service:
+    build: ./ciphershare-file-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - discovery-service
+
+  sharing-service:
+    build: ./ciphershare-sharing-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - discovery-service
+
+volumes:
+  mysql_data:
