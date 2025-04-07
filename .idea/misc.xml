@@ -14,7 +14,14 @@
         <option value="$PROJECT_DIR$/ciphershare-audit-service/pom.xml" />
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/ciphershare-discovery-service/pom.xml" />
+        <option value="$PROJECT_DIR$/ciphershare-eureka-server/pom.xml" />
+        <option value="$PROJECT_DIR$/ciphershare-api-gateway/pom.xml" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/ciphershare-eureka-server/pom.xml" />
+      </set>
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_23" default="true" project-jdk-name="openjdk-23" project-jdk-type="JavaSDK">

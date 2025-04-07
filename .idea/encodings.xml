@@ -5,8 +5,10 @@
     <file url="file://$PROJECT_DIR$/CipherShare/ciphershare-file-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/CipherShare/ciphershare-sharing-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/CipherShare/ciphershare-user-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ciphershare-api-gateway/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ciphershare-audit-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ciphershare-discovery-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ciphershare-eureka-server/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ciphershare-file-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ciphershare-sharing-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ciphershare-user-service/src/main/java" charset="UTF-8" />

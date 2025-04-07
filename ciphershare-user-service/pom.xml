@@ -80,25 +80,30 @@
 
 	<build>
 		<plugins>
+			<!-- ✅ Maven Compiler Plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version> <!-- Minimum version to support Java 23 -->
 				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
+					<release>23</release> <!-- Replaces <source> and <target> -->
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
+							<version>1.18.30</version> <!-- Add version for Lombok -->
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
 
+			<!-- ✅ Spring Boot Plugin with Version -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>3.2.4</version> <!-- Match your Spring Boot version -->
 			</plugin>
 		</plugins>
 	</build>
+
 </project>
