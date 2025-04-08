@@ -4,20 +4,20 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "files")
 public class File {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "fileID", nullable = false, updatable = false)
-    private String fileID = UUID.randomUUID().toString();
+    private String fileID;  // UUID format for unique identification
 
     private String fileName;
     private String fileType;
     private Long fileSize;
-    private String encryptedPath;
-    private String description;
+    private String ipfsCid; // Stores only the CID
     private String ownerID;
 
     @CreationTimestamp
@@ -26,8 +26,9 @@ public class File {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    // Getters and Setters
+
     public String getFileID() { return fileID; }
+    public void setFileID(String fileID) { this.fileID = fileID; }
 
     public String getFileName() { return fileName; }
     public void setFileName(String fileName) { this.fileName = fileName; }
@@ -38,11 +39,8 @@ public class File {
     public Long getFileSize() { return fileSize; }
     public void setFileSize(Long fileSize) { this.fileSize = fileSize; }
 
-    public String getEncryptedPath() { return encryptedPath; }
-    public void setEncryptedPath(String encryptedPath) { this.encryptedPath = encryptedPath; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getIpfsCid() { return ipfsCid; }
+    public void setIpfsCid(String ipfsCid) { this.ipfsCid = ipfsCid; }
 
     public String getOwnerID() { return ownerID; }
     public void setOwnerID(String ownerID) { this.ownerID = ownerID; }
