@@ -35,8 +35,17 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
         </processorPath>
-        <module name="ciphershare-file-service" />
         <module name="ciphershare-user-service" />
+      </profile>
+      <profile name="Annotation profile for ciphershare-file-service" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
+        </processorPath>
+        <module name="ciphershare-file-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -50,7 +59,7 @@
       <module name="ciphershare-audit-service" options="" />
       <module name="ciphershare-discovery-service" options="-parameters" />
       <module name="ciphershare-eureka-server" options="-parameters" />
-      <module name="ciphershare-file-service" options="" />
+      <module name="ciphershare-file-service" options="-parameters" />
       <module name="ciphershare-sharing-service" options="" />
       <module name="ciphershare-user-service" options="" />
     </option>
