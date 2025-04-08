@@ -98,6 +98,7 @@ public class FileService {
         return fileUrl;
     }
 
+
     @Transactional
     public void deleteFile(String fileId) {
         logger.info("Attempting to delete file with ID: {}", fileId);
@@ -109,7 +110,18 @@ public class FileService {
             throw new RuntimeException("File not found, deletion failed");
         }
 
+        String cid = fileEntity.get().getIpfsCid();
+
+        // Call Pinata API to delete the file
+        webClient.delete()
+                .uri("/pinning/unpin/" + cid)
+                .header("pinata_api_key", pinataApiKey)
+                .header("pinata_secret_api_key", pinataApiSecret)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
         fileRepository.delete(fileEntity.get());
-        logger.info("File deleted successfully from database");
+        logger.info("File deleted successfully from database and Pinata");
     }
 }
