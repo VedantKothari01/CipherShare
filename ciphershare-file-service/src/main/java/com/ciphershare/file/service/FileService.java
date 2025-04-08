@@ -1,23 +1,20 @@
 package com.ciphershare.file.service;
 
 import com.ciphershare.file.entity.File;
-import com.ciphershare.file.entity.FileVersion;
 import com.ciphershare.file.repository.FileRepository;
-import com.ciphershare.file.repository.FileVersionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.services.s3.S3Client;
+
 import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
+
+import org.json.JSONObject;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
+
 
 @Service
 public class FileService {
@@ -25,59 +22,59 @@ public class FileService {
     @Autowired
     private FileRepository fileRepository;
 
-    @Autowired
-    private FileVersionRepository fileVersionRepository;
+    @Value("${pinata.apiKey}")
+    private String pinataApiKey;
 
-    private final S3Client s3Client;
-    private final String bucketName;
+    @Value("${pinata.apiSecret}")
+    private String pinataApiSecret;
 
-    @Autowired
-    public FileService(
-            @Value("${filebase.endpoint}") String endpoint,
-            @Value("${filebase.accessKey}") String accessKey,
-            @Value("${filebase.secretKey}") String secretKey,
-            @Value("${filebase.bucketName}") String bucketName
-    ) {
-        this.bucketName = bucketName;
+    private static final String PINATA_UPLOAD_URL = "https://api.pinata.cloud/pinning/pinFileToIPFS";
+    private static final String PINATA_DELETE_URL = "https://api.pinata.cloud/pinning/unpin/";
 
-        this.s3Client = S3Client.builder()
-                .endpointOverride(URI.create(endpoint))
-                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
-                .region(software.amazon.awssdk.regions.Region.US_EAST_1)
-                .build();
-    }
+    private final RestTemplate restTemplate = new RestTemplate();
 
     public File uploadFile(MultipartFile file) throws IOException {
-        String fileKey = UUID.randomUUID().toString() + "-" + file.getOriginalFilename();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("pinata_api_key", pinataApiKey);
+        headers.set("pinata_secret_api_key", pinataApiSecret);
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-        s3Client.putObject(
-                PutObjectRequest.builder()
-                        .bucket(bucketName)
-                        .key(fileKey)
-                        .build(),
-                RequestBody.fromBytes(file.getBytes())
-        );
+        HttpEntity<MultipartFile> requestEntity = new HttpEntity<>(file, headers);
+        ResponseEntity<String> response = restTemplate.exchange(PINATA_UPLOAD_URL, HttpMethod.POST, requestEntity, String.class);
 
-        // Save metadata in database
-        File savedFile = new File();
-        savedFile.setFileName(file.getOriginalFilename());
-        savedFile.setFileSize(file.getSize());
-        savedFile.setFileType(file.getContentType());
-        savedFile.setEncryptedPath("https://s3.filebase.com/" + bucketName + "/" + fileKey); // Filebase URL
+        if (response.getStatusCode() == HttpStatus.OK) {
+            JSONObject jsonResponse = new JSONObject(response.getBody());
+            String cid = jsonResponse.getString("IpfsHash");
 
-        return fileRepository.save(savedFile);
+            // Save file metadata in database
+            File savedFile = new File();
+            savedFile.setFileName(file.getOriginalFilename());
+            savedFile.setFileSize(file.getSize());
+            savedFile.setFileType(file.getContentType());
+            savedFile.setEncryptedPath("https://gateway.pinata.cloud/ipfs/" + cid); // IPFS Gateway URL
+
+            return fileRepository.save(savedFile);
+        } else {
+            throw new RuntimeException("Failed to upload file to Pinata: " + response.getBody());
+        }
     }
 
     public String getFileUrl(String fileId) {
-        return "https://s3.filebase.com/" + bucketName + "/" + fileId;
+        File file = fileRepository.findById(fileId).orElseThrow(() -> new RuntimeException("File not found"));
+        return file.getEncryptedPath();
     }
 
     public void deleteFile(String fileId) {
-        s3Client.deleteObject(DeleteObjectRequest.builder().bucket(bucketName).key(fileId).build());
-        fileRepository.deleteById(fileId);
-    }
+        File file = fileRepository.findById(fileId).orElseThrow(() -> new RuntimeException("File not found"));
+        String cid = file.getEncryptedPath().replace("https://gateway.pinata.cloud/ipfs/", "");
 
-    public List<FileVersion> getFileVersions(String fileId) {
-        return fileVersionRepository.findByFileID(fileId);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("pinata_api_key", pinataApiKey);
+        headers.set("pinata_secret_api_key", pinataApiSecret);
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+        restTemplate.exchange(PINATA_DELETE_URL + cid, HttpMethod.DELETE, requestEntity, String.class);
+
+        fileRepository.deleteById(fileId);
     }
 }
