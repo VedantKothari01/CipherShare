@@ -1,63 +1,80 @@
 package com.ciphershare.file.service;
 
-import com.ciphershare.file.client.AuditClient;
-import com.ciphershare.file.dto.BlockchainRecordDTO;
 import com.ciphershare.file.entity.File;
 import com.ciphershare.file.entity.FileVersion;
 import com.ciphershare.file.repository.FileRepository;
 import com.ciphershare.file.repository.FileVersionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.*;
+
+import java.io.IOException;
+import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class FileService {
+
     @Autowired
     private FileRepository fileRepository;
 
     @Autowired
     private FileVersionRepository fileVersionRepository;
 
+    private final S3Client s3Client;
+    private final String bucketName;
+
     @Autowired
-    private AuditClient auditClient;
+    public FileService(
+            @Value("${filebase.endpoint}") String endpoint,
+            @Value("${filebase.accessKey}") String accessKey,
+            @Value("${filebase.secretKey}") String secretKey,
+            @Value("${filebase.bucketName}") String bucketName
+    ) {
+        this.bucketName = bucketName;
 
-    public File createFile(File file) {
-        File savedFile = fileRepository.save(file);
-        // Create a blockchain record DTO for audit logging
-        BlockchainRecordDTO recordDTO = new BlockchainRecordDTO();
-        recordDTO.setFileID(savedFile.getFileID());
-        recordDTO.setTxnHash("dummyTxnHash"); // Replace with actual txn hash generation in production
-        recordDTO.setActionType("FILE_CREATED");
-        try {
-            auditClient.addRecord(recordDTO);
-        } catch (Exception e) {
-            System.err.println("Error calling Audit Service: " + e.getMessage());
-        }
-        return savedFile;
+        this.s3Client = S3Client.builder()
+                .endpointOverride(URI.create(endpoint))
+                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
+                .region(software.amazon.awssdk.regions.Region.US_EAST_1)
+                .build();
     }
 
-    public File getFile(String fileId) {
-        return fileRepository.findById(fileId)
-                .orElseThrow(() -> new RuntimeException("File not found"));
+    public File uploadFile(MultipartFile file) throws IOException {
+        String fileKey = UUID.randomUUID().toString() + "-" + file.getOriginalFilename();
+
+        s3Client.putObject(
+                PutObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(fileKey)
+                        .build(),
+                RequestBody.fromBytes(file.getBytes())
+        );
+
+        // Save metadata in database
+        File savedFile = new File();
+        savedFile.setFileName(file.getOriginalFilename());
+        savedFile.setFileSize(file.getSize());
+        savedFile.setFileType(file.getContentType());
+        savedFile.setEncryptedPath("https://s3.filebase.com/" + bucketName + "/" + fileKey); // Filebase URL
+
+        return fileRepository.save(savedFile);
     }
 
-    public File updateFile(String fileId, File updatedFile) {
-        File existing = getFile(fileId);
-        existing.setFileName(updatedFile.getFileName());
-        existing.setFileType(updatedFile.getFileType());
-        existing.setFileSize(updatedFile.getFileSize());
-        existing.setEncryptedPath(updatedFile.getEncryptedPath());
-        existing.setDescription(updatedFile.getDescription());
-        return fileRepository.save(existing);
+    public String getFileUrl(String fileId) {
+        return "https://s3.filebase.com/" + bucketName + "/" + fileId;
     }
 
     public void deleteFile(String fileId) {
+        s3Client.deleteObject(DeleteObjectRequest.builder().bucket(bucketName).key(fileId).build());
         fileRepository.deleteById(fileId);
-    }
-
-    // File Versioning Methods
-    public FileVersion addFileVersion(FileVersion version) {
-        return fileVersionRepository.save(version);
     }
 
     public List<FileVersion> getFileVersions(String fileId) {

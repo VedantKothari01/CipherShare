@@ -1,13 +1,14 @@
 package com.ciphershare;
 
+import com.ciphershare.file.FileServiceApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class CiphershareFileServiceApplicationTests {
+@SpringBootTest(classes = FileServiceApplication.class)
+public class CiphershareFileServiceApplicationTests {
 
 	@Test
-	void contextLoads() {
+	public void contextLoads() {
+		// The test will pass if the context loads successfully.
 	}
-
 }
