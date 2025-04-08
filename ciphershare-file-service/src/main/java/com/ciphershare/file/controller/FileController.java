@@ -21,9 +21,11 @@ public class FileController {
 
     @Operation(summary = "Upload File", description = "Uploads a file to IPFS via Pinata")
     @PostMapping("/upload")
-    public ResponseEntity<File> uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
-        return ResponseEntity.ok(fileService.uploadFile(file));
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+        String response = fileService.uploadFile(file);
+        return ResponseEntity.ok(response);
     }
+
 
     @Operation(summary = "Get File URL", description = "Retrieves the URL of a stored file")
     @GetMapping("/{fileId}/url")
