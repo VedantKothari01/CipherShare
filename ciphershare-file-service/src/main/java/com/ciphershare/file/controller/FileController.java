@@ -39,10 +39,4 @@ public class FileController {
         fileService.deleteFile(fileId);
         return ResponseEntity.noContent().build();
     }
-
-    @Operation(summary = "Get File Versions", description = "Retrieves all versions of a file")
-    @GetMapping("/versions/{fileId}")
-    public ResponseEntity<List<FileVersion>> getFileVersions(@PathVariable String fileId) {
-        return ResponseEntity.ok(fileService.getFileVersions(fileId));
-    }
 }
