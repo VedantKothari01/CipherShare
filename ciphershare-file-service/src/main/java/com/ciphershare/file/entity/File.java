@@ -1,13 +1,11 @@
 package com.ciphershare.file.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "files")
@@ -15,8 +13,7 @@ public class File {
 
     @Id
     @Column(name = "fileID", nullable = false, updatable = false)
-    private String fileID;  // Now stores Pinata's file ID
-
+    private String fileID = UUID.randomUUID().toString();
     private String fileName;
     private String fileType;
     private Long fileSize;
@@ -28,6 +25,12 @@ public class File {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @Column(name = "pinata_file_id", nullable = false)
+    private String pinataFileId;
+
+    public String getPinataFileId() { return pinataFileId; }
+    public void setPinataFileId(String pinataFileId) { this.pinataFileId = pinataFileId; }
 
     public String getFileID() { return fileID; }
     public void setFileID(String fileID) { this.fileID = fileID; }
