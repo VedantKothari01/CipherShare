@@ -8,10 +8,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
-@Tag(name = "File API", description = "Handles file metadata and versioning")
+@Tag(name = "File API", description = "Handles file uploads, retrieval, and versioning")
 @RestController
 @RequestMapping("/api/files")
 public class FileController {
@@ -19,38 +21,26 @@ public class FileController {
     @Autowired
     private FileService fileService;
 
-    @Operation(summary = "Create File", description = "Creates a new file record.")
-    @PostMapping
-    public ResponseEntity<File> createFile(@RequestBody File file) {
-        return ResponseEntity.ok(fileService.createFile(file));
+    @Operation(summary = "Upload File", description = "Uploads a file to IPFS (via Filebase)")
+    @PostMapping("/upload")
+    public ResponseEntity<File> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+        return ResponseEntity.ok(fileService.uploadFile(file));
     }
 
-    @Operation(summary = "Get File by ID", description = "Retrieves file details by file ID.")
-    @GetMapping("/{fileId}")
-    public ResponseEntity<File> getFile(@PathVariable String fileId) {
-        return ResponseEntity.ok(fileService.getFile(fileId));
+    @Operation(summary = "Get File URL", description = "Retrieves the URL of a stored file")
+    @GetMapping("/{fileId}/url")
+    public ResponseEntity<String> getFileUrl(@PathVariable String fileId) {
+        return ResponseEntity.ok(fileService.getFileUrl(fileId));
     }
 
-    @Operation(summary = "Update File", description = "Updates an existing file record.")
-    @PutMapping("/{fileId}")
-    public ResponseEntity<File> updateFile(@PathVariable String fileId, @RequestBody File file) {
-        return ResponseEntity.ok(fileService.updateFile(fileId, file));
-    }
-
-    @Operation(summary = "Delete File", description = "Deletes a file record.")
+    @Operation(summary = "Delete File", description = "Deletes a file from IPFS/Filebase")
     @DeleteMapping("/{fileId}")
     public ResponseEntity<Void> deleteFile(@PathVariable String fileId) {
         fileService.deleteFile(fileId);
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Add File Version", description = "Adds a new version to an existing file.")
-    @PostMapping("/versions")
-    public ResponseEntity<FileVersion> addFileVersion(@RequestBody FileVersion version) {
-        return ResponseEntity.ok(fileService.addFileVersion(version));
-    }
-
-    @Operation(summary = "Get File Versions", description = "Retrieves all versions of a file.")
+    @Operation(summary = "Get File Versions", description = "Retrieves all versions of a file")
     @GetMapping("/versions/{fileId}")
     public ResponseEntity<List<FileVersion>> getFileVersions(@PathVariable String fileId) {
         return ResponseEntity.ok(fileService.getFileVersions(fileId));

@@ -6,7 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
+
 @Entity
 @Table(name = "sharedFiles")
 public class SharedFile {
@@ -14,13 +14,36 @@ public class SharedFile {
     @Column(name = "shareID", nullable = false, updatable = false)
     private String shareID = UUID.randomUUID().toString();
 
-    private String fileID;           // Reference to file-service fileID
-    private String sharedWithUserID;   // Reference to user-service userID
-
-    private String permissions;        // e.g., "READ", "WRITE"
-    private String status;             // e.g., "ACTIVE", "EXPIRED"
+    private String fileID;
+    private String sharedWithUserID;
+    private String permissions;
+    private String status;
     private LocalDateTime accessExpiry;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    public String getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(String permissions) {
+        this.permissions = permissions;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getAccessExpiry() {
+        return accessExpiry;
+    }
+
+    public void setAccessExpiry(LocalDateTime accessExpiry) {
+        this.accessExpiry = accessExpiry;
+    }
 }
