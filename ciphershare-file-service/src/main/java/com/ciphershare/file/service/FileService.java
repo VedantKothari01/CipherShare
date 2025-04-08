@@ -4,17 +4,18 @@ import com.ciphershare.file.entity.File;
 import com.ciphershare.file.repository.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
+import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import software.amazon.awssdk.services.s3.model.*;
-
-import java.io.IOException;
-
 import org.json.JSONObject;
-import org.springframework.http.*;
-import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class FileService {
@@ -30,28 +31,43 @@ public class FileService {
 
     private static final String PINATA_UPLOAD_URL = "https://api.pinata.cloud/pinning/pinFileToIPFS";
     private static final String PINATA_DELETE_URL = "https://api.pinata.cloud/pinning/unpin/";
+    private static final String PINATA_GATEWAY_URL = "https://gateway.pinata.cloud/ipfs/";
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
 
-    public File uploadFile(MultipartFile file) throws IOException {
+    @Autowired
+    public FileService(FileRepository fileRepository) {
+        this.fileRepository = fileRepository;
+        this.restTemplate = createRestTemplate();
+    }
+
+    private RestTemplate createRestTemplate() {
+        RestTemplate restTemplate = new RestTemplate();
+        List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+        messageConverters.add(new FormHttpMessageConverter());
+        messageConverters.add(new SourceHttpMessageConverter<>());
+        restTemplate.setMessageConverters(messageConverters);
+        return restTemplate;
+    }
+
+    public File uploadFile(MultipartFile file) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.set("pinata_api_key", pinataApiKey);
         headers.set("pinata_secret_api_key", pinataApiSecret);
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         HttpEntity<MultipartFile> requestEntity = new HttpEntity<>(file, headers);
-        ResponseEntity<String> response = restTemplate.exchange(PINATA_UPLOAD_URL, HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> response = restTemplate.postForEntity(PINATA_UPLOAD_URL, requestEntity, String.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {
             JSONObject jsonResponse = new JSONObject(response.getBody());
             String cid = jsonResponse.getString("IpfsHash");
 
-            // Save file metadata in database
             File savedFile = new File();
             savedFile.setFileName(file.getOriginalFilename());
             savedFile.setFileSize(file.getSize());
             savedFile.setFileType(file.getContentType());
-            savedFile.setEncryptedPath("https://gateway.pinata.cloud/ipfs/" + cid); // IPFS Gateway URL
+            savedFile.setEncryptedPath(PINATA_GATEWAY_URL + cid);
 
             return fileRepository.save(savedFile);
         } else {
@@ -66,7 +82,7 @@ public class FileService {
 
     public void deleteFile(String fileId) {
         File file = fileRepository.findById(fileId).orElseThrow(() -> new RuntimeException("File not found"));
-        String cid = file.getEncryptedPath().replace("https://gateway.pinata.cloud/ipfs/", "");
+        String cid = file.getEncryptedPath().replace(PINATA_GATEWAY_URL, "");
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("pinata_api_key", pinataApiKey);
