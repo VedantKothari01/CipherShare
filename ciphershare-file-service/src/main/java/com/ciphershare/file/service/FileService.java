@@ -3,6 +3,8 @@ package com.ciphershare.file.service;
 import com.ciphershare.file.entity.File;
 import com.ciphershare.file.repository.FileRepository;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
@@ -16,10 +18,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.UUID;
+
 
 @Service
 public class FileService {
-
+    private static final Logger logger = LoggerFactory.getLogger(FileService.class);
     private final WebClient webClient;
     private final FileRepository fileRepository;
 
@@ -58,8 +62,10 @@ public class FileService {
 
         JSONObject jsonResponse = new JSONObject(response);
         String cid = jsonResponse.getString("IpfsHash");
+        String pinataFileId = jsonResponse.getString("id");  // Pinata's File ID
 
         File newFile = new File();
+        newFile.setFileID(pinataFileId);  // Store Pinata's File ID as fileID
         newFile.setFileName(file.getOriginalFilename());
         newFile.setFileType(file.getContentType());
         newFile.setFileSize(file.getSize());
@@ -68,35 +74,39 @@ public class FileService {
 
         JSONObject responseJson = new JSONObject();
         responseJson.put("message", "File uploaded successfully!");
-        responseJson.put("fileId", newFile.getFileID());
         responseJson.put("cid", cid);
+        responseJson.put("fileId", pinataFileId);
         responseJson.put("fileUrl", PINATA_GATEWAY_URL + cid);
 
         return responseJson.toString();
     }
 
     public String getFileUrl(String fileId) {
-        Optional<File> fileOptional = fileRepository.findById(fileId);
-        if (fileOptional.isEmpty()) {
-            throw new RuntimeException("File not found for ID: " + fileId);
+        Optional<File> fileEntity = fileRepository.findByFileID(fileId);
+
+        if (fileEntity.isEmpty()) {
+            throw new RuntimeException("File not found");
         }
-        File file = fileOptional.get();
-        return PINATA_GATEWAY_URL + file.getIpfsCid();
+        return PINATA_GATEWAY_URL + fileEntity.get().getIpfsCid();
     }
 
     @Transactional
     public void deleteFile(String fileId) {
-        File file = fileRepository.findById(fileId).orElseThrow(() -> new RuntimeException("File not found"));
-        String cid = file.getIpfsCid();
+        Optional<File> fileEntity = fileRepository.findByFileID(fileId);
 
+        if (fileEntity.isEmpty()) {
+            throw new RuntimeException("File not found, deletion failed");
+        }
+
+        // Remove from Pinata using File ID
         webClient.delete()
-                .uri("/pinning/unpin/" + cid)
+                .uri("/pinning/unpin/" + fileId)
                 .header("pinata_api_key", pinataApiKey)
                 .header("pinata_secret_api_key", pinataApiSecret)
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
 
-        fileRepository.deleteById(fileId);
+        fileRepository.delete(fileEntity.get());
     }
 }
