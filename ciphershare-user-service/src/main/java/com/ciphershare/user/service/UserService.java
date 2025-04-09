@@ -2,7 +2,6 @@ package com.ciphershare.user.service;
 
 import com.ciphershare.user.entity.User;
 import com.ciphershare.user.repository.UserRepository;
-import com.ciphershare.user.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,9 +22,6 @@ public class UserService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private JwtUtil jwtUtil;
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
@@ -45,12 +41,11 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
-    public String loginUser(String username, String password) {
+    public void loginUser(String username, String password) {
         UserDetails userDetails = loadUserByUsername(username);
         if (!passwordEncoder.matches(password, userDetails.getPassword())) {
             throw new IllegalArgumentException("Invalid password");
         }
-        return jwtUtil.generateToken(userDetails);
     }
 
     @Transactional

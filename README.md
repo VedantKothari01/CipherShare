@@ -70,7 +70,7 @@ cd CipherShare
 
 3. Build and start all services:
 ```bash
-docker-compose up -d
+docker-compose up -d --build
 ```
 
 4. Access the services:
