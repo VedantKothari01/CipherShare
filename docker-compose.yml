@@ -2,12 +2,13 @@ version: '3.8'
 
 services:
   mysql-db:
-    image: mysql:8
+    image: mysql:8.0
+    container_name: ciphershare-mysql-db
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: ciphershare
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql-data:/var/lib/mysql
     networks:
