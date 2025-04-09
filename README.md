@@ -66,3 +66,4 @@ This project is in its early phases, focusing on building a robust and secure cl
 - **Shaurya Patil**
 - **Tanishq Nabar**
 - **Aniruddha Gurjar**
+- **Akshat Vora**
