@@ -1,9 +1,9 @@
 # Dockerfile
 
-FROM openjdk:23-slim
+FROM openjdk:21-slim
 WORKDIR /app
 
-# Copy only the final jar
+# Copy the built jar
 COPY target/*.jar app.jar
 
 # Run the jar
