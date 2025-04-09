@@ -11,9 +11,9 @@
 	<description>Manages file metadata, file versioning, and file operations for CipherShare.</description>
 
 	<properties>
-		<java.version>23</java.version>
+		<java.version>21</java.version>
 		<spring-boot.version>3.4.3</spring-boot.version>
-		<spring-cloud.version>2024.0.0</spring-cloud.version>
+		<spring-cloud.version>2024.0.1</spring-cloud.version>
 	</properties>
 
 	<repositories>
@@ -112,7 +112,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.11.0</version>
 				<configuration>
-					<release>23</release>
+					<release>21</release>
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
@@ -120,15 +120,20 @@
 							<version>1.18.30</version>
 						</path>
 					</annotationProcessorPaths>
-					<compilerArgs>
-						<arg>-parameters</arg>
-					</compilerArgs>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>3.2.4</version>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

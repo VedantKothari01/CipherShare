@@ -8,7 +8,7 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/your-username/ciphershare-config
+          uri: https://github.com/VedantKothari01/CipherShare.git
           search-paths: '{application}'
           default-label: main
           clone-on-start: true
