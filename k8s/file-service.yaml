@@ -1,3 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: file-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: file-service
+  template:
+    metadata:
+      labels:
+        app: file-service
+    spec:
+      containers:
+      - name: file-service
+        image: ciphershare-file-service:latest
+        ports:
+        - containerPort: 8081
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://mysql:3306/ciphershare
+        - name: SPRING_DATASOURCE_USERNAME
+          value: root
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: root
+        - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+          value: http://eureka-server:8761/eureka
+        - name: PINATA_API_KEY
+          value: 5aaea962fac59a9278aa
+        - name: PINATA_API_SECRET
+          value: 6b11e3f7925d623fedebb52ff2f3af514cec92eb3e757bebedeca1bed659c7ab
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -6,6 +39,6 @@ spec:
   selector:
     app: file-service
   ports:
-    - port: 8083
-      targetPort: 8083
+    - port: 8081
+      targetPort: 8081
   type: ClusterIP

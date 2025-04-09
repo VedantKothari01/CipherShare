@@ -8,17 +8,34 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "blockchainRecords")
+@Table(name = "blockchain_records")
 public class BlockchainRecord {
     @Id
-    @Column(name = "recordID", nullable = false, updatable = false)
-    private String recordID = UUID.randomUUID().toString();
+    @Column(name = "record_id", nullable = false, updatable = false)
+    private String recordId = UUID.randomUUID().toString();
 
-    private String fileID; // Reference to file-service fileID
+    @Column(name = "file_id", nullable = false)
+    private String fileId;
+
+    @Column(name = "user_id", nullable = false)
+    private String userId;
+
+    @Column(name = "action", nullable = false)
+    private String action; 
+
+    @Column(name = "txn_hash")
     private String txnHash;
 
+    @Column(name = "metadata", columnDefinition = "TEXT")
+    private String metadata; 
+
     @CreationTimestamp
+    @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
 
-    private String actionType; // e.g., "FILE_CREATED", "FILE_UPDATED"
+    @Column(name = "ip_address")
+    private String ipAddress;
+
+    @Column(name = "user_agent")
+    private String userAgent;
 }

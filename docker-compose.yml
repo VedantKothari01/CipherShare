@@ -1,72 +1,107 @@
+version: '3.8'
+
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
-    restart: always
+  mysql-db:
+    image: mysql:8
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: ciphershare
-      MYSQL_USER: root
-      MYSQL_PASSWORD: Lucifer
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql-data:/var/lib/mysql
+    networks:
+      - cipher-net
 
-  redis:
-    image: redis:7-alpine
-    container_name: redis
-    ports:
-      - "6379:6379"
-
-  discovery-service:
+  eureka-server:
     build: ./ciphershare-discovery-service
     ports:
       - "8761:8761"
+    networks:
+      - cipher-net
     depends_on:
-      - redis
-      - mysql
-
-  api-gateway:
-    build: ./ciphershare-api-gateway
-    ports:
-      - "8080:8080"
-    depends_on:
-      - discovery-service
-      - redis
+      - mysql-db
 
   user-service:
     build: ./ciphershare-user-service
     ports:
-      - "8081:8081"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/ciphershare
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: Lucifer
+      - "8084:8084"
+    networks:
+      - cipher-net
     depends_on:
-      - mysql
-      - discovery-service
+      - eureka-server
+      - mysql-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/ciphershare?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - JWT_SECRET=your-secret-key-here
+      - JWT_EXPIRATION=86400000
+
+  file-service:
+    build: ./ciphershare-file-service
+    ports:
+      - "8081:8081"
+    networks:
+      - cipher-net
+    depends_on:
+      - eureka-server
+      - mysql-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/ciphershare?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - PINATA_API_KEY=5aaea962fac59a9278aa
+      - PINATA_API_SECRET=6b11e3f7925d623fedebb52ff2f3af514cec92eb3e757bebedeca1bed659c7ab
 
   audit-service:
     build: ./ciphershare-audit-service
     ports:
       - "8082:8082"
+    networks:
+      - cipher-net
     depends_on:
-      - discovery-service
-
-  file-service:
-    build: ./ciphershare-file-service
-    ports:
-      - "8083:8083"
-    depends_on:
-      - discovery-service
+      - eureka-server
+      - mysql-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/ciphershare?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
 
   sharing-service:
     build: ./ciphershare-sharing-service
     ports:
-      - "8084:8084"
+      - "8083:8083"
+    networks:
+      - cipher-net
     depends_on:
-      - discovery-service
+      - eureka-server
+      - mysql-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/ciphershare?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+
+  api-gateway:
+    build: ./ciphershare-api-gateway
+    ports:
+      - "8080:8080"
+    networks:
+      - cipher-net
+    depends_on:
+      - eureka-server
+      - user-service
+      - file-service
+      - audit-service
+      - sharing-service
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/ciphershare?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+
+networks:
+  cipher-net:
+    driver: bridge
 
 volumes:
-  mysql_data:
+  mysql-data:

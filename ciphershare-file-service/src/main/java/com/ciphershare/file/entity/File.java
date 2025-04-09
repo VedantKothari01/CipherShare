@@ -29,8 +29,14 @@ public class File {
     @Column(name = "pinata_file_id", nullable = false)
     private String pinataFileId;
 
+    @Column(name = "encrypted", nullable = false)
+    private boolean encrypted = false;
+
     public String getPinataFileId() { return pinataFileId; }
     public void setPinataFileId(String pinataFileId) { this.pinataFileId = pinataFileId; }
+
+    public boolean isEncrypted() { return encrypted; }
+    public void setEncrypted(boolean encrypted) { this.encrypted = encrypted; }
 
     public String getFileID() { return fileID; }
     public void setFileID(String fileID) { this.fileID = fileID; }

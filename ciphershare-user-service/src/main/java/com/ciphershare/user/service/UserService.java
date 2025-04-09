@@ -2,46 +2,97 @@ package com.ciphershare.user.service;
 
 import com.ciphershare.user.entity.User;
 import com.ciphershare.user.repository.UserRepository;
+import com.ciphershare.user.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
+import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
+
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+    }
+
+    @Transactional
     public User registerUser(User user) {
-        // In production, hash the password before saving
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    public User login(String email, String passwordHash) {
-        return userRepository.findByEmail(email)
-                .filter(user -> user.getPasswordHash().equals(passwordHash))
-                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+    public String loginUser(String username, String password) {
+        UserDetails userDetails = loadUserByUsername(username);
+        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+            throw new IllegalArgumentException("Invalid password");
+        }
+        return jwtUtil.generateToken(userDetails);
     }
 
-    public User getUserById(String userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    @Transactional
+    public User updateUser(String userId, User updatedUser) {
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if (!existingUser.getUsername().equals(updatedUser.getUsername()) &&
+            userRepository.existsByUsername(updatedUser.getUsername())) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+
+        if (!existingUser.getEmail().equals(updatedUser.getEmail()) &&
+            userRepository.existsByEmail(updatedUser.getEmail())) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+
+        existingUser.setUsername(updatedUser.getUsername());
+        existingUser.setEmail(updatedUser.getEmail());
+        existingUser.setFirstName(updatedUser.getFirstName());
+        existingUser.setLastName(updatedUser.getLastName());
+
+        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        }
+
+        return userRepository.save(existingUser);
+    }
+
+    public Optional<User> getUserById(String userId) {
+        return userRepository.findById(userId);
+    }
+
+    @Transactional
+    public void deleteUser(String userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new IllegalArgumentException("User not found");
+        }
+        userRepository.deleteById(userId);
     }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
-    }
-
-    public User updateUser(String userId, User updatedUser) {
-        User existing = getUserById(userId);
-        existing.setUsername(updatedUser.getUsername());
-        existing.setEmail(updatedUser.getEmail());
-        existing.setPasswordHash(updatedUser.getPasswordHash());
-        existing.setRole(updatedUser.getRole());
-        existing.setPhoneNumber(updatedUser.getPhoneNumber());
-        return userRepository.save(existing);
-    }
-
-    public void deleteUser(String userId) {
-        userRepository.deleteById(userId);
     }
 }
