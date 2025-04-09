@@ -1,6 +1,29 @@
 # CipherShare: Decentralized Secure Cloud Storage
 
-A microservices-based secure file sharing platform with decentralized storage using IPFS.
+CipherShare is a secure file sharing platform built using microservices architecture. It provides secure file storage, sharing, and audit logging capabilities with decentralized storage using IPFS.
+
+## Project Overview
+
+This project implements a robust and secure cloud storage system with a modular architecture using independent microservices for scalability and reliability. The system supports secure, decentralized storage and encrypted access for users, with each microservice handling a distinct domain (User, File, Sharing, and Audit).
+
+## Current Status
+
+- **Phase 1**: Completed the project synopsis, initial architecture planning, and database design along with the Entity-Relationship Diagram (ERD).
+- **Phase 2**: Core microservices have been developed, including:
+  - **User Service**: Manages user registration, authentication, and profile management.
+  - **File Service**: Handles file metadata and versioning, with inter-service communication to log audit records.
+  - **Sharing Service**: Manages file sharing permissions and access.
+  - **Audit Service**: Records blockchain-style audit logs for file actions.
+- **Phase 3**: Infrastructure and Deployment
+  - Docker containerization
+  - Kubernetes orchestration
+  - API Gateway implementation
+  - Service discovery with Eureka
+- **Phase 4**: Security and Monitoring
+  - JWT-based authentication
+  - IPFS integration for decentralized storage
+  - Audit logging system
+  - Environment-based configuration
 
 ## Architecture
 
@@ -12,7 +35,21 @@ A microservices-based secure file sharing platform with decentralized storage us
 - **Eureka Server**: Service discovery
 - **MySQL**: Database for all services
 
-## Prerequisites
+## Technologies Used
+
+- **Microservices Architecture**: Java 17, Spring Boot, Spring Cloud
+- **Database**: MySQL 8, Hibernate ORM (Spring Data JPA)
+- **Containerization & Orchestration**: Docker, Kubernetes
+- **API Communication**: RESTful APIs, OpenFeign
+- **Security**: Spring Security, JWT, HTTPS
+- **Deployment**: Docker Compose, Kubernetes
+- **Monitoring**: Spring Boot Actuator
+- **Version Control**: Git (GitHub)
+- **Storage**: IPFS (via Pinata)
+
+## Quick Start
+
+### Prerequisites
 
 - Java 17+
 - Maven
@@ -20,8 +57,6 @@ A microservices-based secure file sharing platform with decentralized storage us
 - Docker Compose
 - Kubernetes (optional)
 - MySQL 8
-
-## Quick Start
 
 ### Using Docker Compose
 
@@ -31,12 +66,14 @@ git clone https://github.com/VedantKothari01/CipherShare.git
 cd CipherShare
 ```
 
-2. Build and start all services:
+2. Create a `.env` file with your configuration (see `.env.example` for template)
+
+3. Build and start all services:
 ```bash
 docker-compose up -d
 ```
 
-3. Access the services:
+4. Access the services:
 - API Gateway: http://localhost:8080
 - Eureka Dashboard: http://localhost:8761
 - Swagger UI for each service:
@@ -73,17 +110,9 @@ Each service has its own README with detailed information:
 - [Audit Service](ciphershare-audit-service/README.md)
 - [Sharing Service](ciphershare-sharing-service/README.md)
 
-## API Documentation
+## Development Setup
 
-All services provide Swagger UI documentation at their respective ports:
-- User Service: 8084
-- File Service: 8081
-- Audit Service: 8082
-- Sharing Service: 8083
-
-## Development
-
-### Local Development Setup
+### Local Development
 
 1. Start MySQL:
 ```bash
@@ -118,13 +147,29 @@ mvn spring-boot:run
 
 All services use Spring Cloud Config to pull configuration from the central config server. Configuration files are stored in the `config-repo` directory.
 
-## Contributing
+## API Documentation
 
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+All services provide Swagger UI documentation at their respective ports:
+- User Service: 8084
+- File Service: 8081
+- Audit Service: 8082
+- Sharing Service: 8083
+
+## Future Enhancements
+
+- Enhanced security with multi-factor authentication
+- Real-time file sharing notifications
+- Advanced file versioning
+- Distributed tracing with Zipkin
+- Prometheus and Grafana integration for monitoring
+
+## Contributors
+
+- **Vedant Kothari**
+- **Shaurya Patil**
+- **Tanishq Nabar**
+- **Aniruddha Gurjar**
+- **Akshat Vora**
 
 ## License
 
