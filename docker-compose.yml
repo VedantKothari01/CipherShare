@@ -2,7 +2,8 @@ version: '3.8'
 
 services:
   mysql-db:
-    image: mysql:8
+    image: mysql:8.0
+    container_name: ciphershare-mysql-db
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: ciphershare
@@ -35,8 +36,6 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/ciphershare?useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
-      - JWT_SECRET=your-secret-key-here
-      - JWT_EXPIRATION=86400000
 
   file-service:
     build: ./ciphershare-file-service
@@ -94,14 +93,9 @@ services:
       - file-service
       - audit-service
       - sharing-service
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/ciphershare?useSSL=false&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
 
 networks:
   cipher-net:
-    driver: bridge
 
 volumes:
   mysql-data:
