@@ -36,8 +36,7 @@ public class AuditService {
     }
 
     private String generateTxnHash(BlockchainRecord record) {
-        // This is a simplified hash generation
-        // In a real blockchain implementation, this would be more complex
+
         String data = record.getFileId() + 
                      record.getUserId() + 
                      record.getAction() + 

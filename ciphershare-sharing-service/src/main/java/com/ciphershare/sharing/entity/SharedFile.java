@@ -2,26 +2,38 @@ package com.ciphershare.sharing.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
-
+@Data
 @Entity
-@Table(name = "sharedFiles")
+@Table(name = "shared_files")
 public class SharedFile {
     @Id
-    @Column(name = "shareID", nullable = false, updatable = false)
-    private String shareID = UUID.randomUUID().toString();
+    @Column(name = "share_id")
+    private String shareID;
 
+    @Column(name = "file_id", nullable = false)
     private String fileID;
+
+    @Column(name = "shared_with_user_id", nullable = false)
     private String sharedWithUserID;
+
+    @Column(name = "permissions")
     private String permissions;
+
+    @Column(name = "status")
     private String status;
+
+    @Column(name = "access_expiry")
     private LocalDateTime accessExpiry;
 
-    @CreationTimestamp
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 
     public String getPermissions() {
         return permissions;

@@ -2,9 +2,8 @@
 
 FROM openjdk:21-slim
 WORKDIR /app
-
-# Copy the built jar
 COPY target/*.jar app.jar
-
-# Run the jar
+EXPOSE 8082
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8082/actuator/health || exit 1
 ENTRYPOINT ["java", "-jar", "app.jar"]

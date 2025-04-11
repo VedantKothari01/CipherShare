@@ -14,13 +14,18 @@ public class File {
     @Id
     @Column(name = "fileID", nullable = false, updatable = false)
     private String fileID = UUID.randomUUID().toString();
+    @Column(name = "file_name", nullable = false)
     private String fileName;
+    @Column(name = "file_type")
     private String fileType;
+    @Column(name = "file_size")
     private Long fileSize;
+    @Column(name = "ipfs_cid")
     private String ipfsCid;
     private String ownerID;
 
     @CreationTimestamp
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
@@ -31,6 +36,9 @@ public class File {
 
     @Column(name = "encrypted", nullable = false)
     private boolean encrypted = false;
+
+    @Column(name = "user_id", nullable = false)
+    private String userId;
 
     public String getPinataFileId() { return pinataFileId; }
     public void setPinataFileId(String pinataFileId) { this.pinataFileId = pinataFileId; }
@@ -58,4 +66,9 @@ public class File {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }

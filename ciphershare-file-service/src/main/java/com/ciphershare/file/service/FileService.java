@@ -1,5 +1,6 @@
 package com.ciphershare.file.service;
 
+import com.ciphershare.file.client.AuditServiceClient;
 import com.ciphershare.file.entity.File;
 import com.ciphershare.file.repository.FileRepository;
 import org.json.JSONObject;
@@ -26,6 +27,8 @@ import javax.crypto.spec.IvParameterSpec;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,6 +42,7 @@ public class FileService {
 
     private final WebClient webClient;
     private final FileRepository fileRepository;
+    private final AuditServiceClient auditServiceClient;
     private final ConcurrentHashMap<String, SecretKey> fileKeys = new ConcurrentHashMap<>();
 
     @Value("${pinata.apiKey}")
@@ -50,9 +54,12 @@ public class FileService {
     private static final String PINATA_GATEWAY_URL = "https://gateway.pinata.cloud/ipfs/";
 
     @Autowired
-    public FileService(WebClient.Builder webClientBuilder, FileRepository fileRepository) {
+    public FileService(WebClient.Builder webClientBuilder, 
+                      FileRepository fileRepository,
+                      AuditServiceClient auditServiceClient) {
         this.webClient = webClientBuilder.baseUrl("https://api.pinata.cloud").build();
         this.fileRepository = fileRepository;
+        this.auditServiceClient = auditServiceClient;
     }
 
     @Retryable(
@@ -60,7 +67,7 @@ public class FileService {
         maxAttempts = MAX_RETRIES,
         backoff = @Backoff(delay = 1000, multiplier = 2)
     )
-    public String uploadFile(MultipartFile file) throws IOException {
+    public String uploadFile(MultipartFile file, String userId) throws IOException {
         try {
             // Generate encryption key
             SecretKey key = generateKey();
@@ -88,8 +95,18 @@ public class FileService {
             newFile.setIpfsCid(String.join(",", chunkCids));
             newFile.setPinataFileId(String.join(",", chunkCids));
             newFile.setEncrypted(true);
+            newFile.setUserId(userId);
 
             fileRepository.save(newFile);
+
+            // Log audit event
+            Map<String, Object> auditEvent = new HashMap<>();
+            auditEvent.put("eventType", "FILE_UPLOAD");
+            auditEvent.put("userId", userId);
+            auditEvent.put("fileId", fileId);
+            auditEvent.put("fileName", file.getOriginalFilename());
+            auditEvent.put("timestamp", System.currentTimeMillis());
+            auditServiceClient.logAuditEvent(auditEvent);
 
             JSONObject responseJson = new JSONObject();
             responseJson.put("message", "File uploaded and encrypted successfully!");
@@ -166,18 +183,6 @@ public class FileService {
         return result;
     }
 
-    private byte[] decryptFile(byte[] encryptedData, SecretKey key) throws Exception {
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        byte[] iv = new byte[16];
-        System.arraycopy(encryptedData, 0, iv, 0, iv.length);
-        
-        byte[] encrypted = new byte[encryptedData.length - iv.length];
-        System.arraycopy(encryptedData, iv.length, encrypted, 0, encrypted.length);
-        
-        cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
-        return cipher.doFinal(encrypted);
-    }
-
     @Retryable(
         value = {WebClientResponseException.class},
         maxAttempts = MAX_RETRIES,
@@ -204,7 +209,7 @@ public class FileService {
         maxAttempts = MAX_RETRIES,
         backoff = @Backoff(delay = 1000, multiplier = 2)
     )
-    public void deleteFile(String fileId) {
+    public void deleteFile(String fileId, String userId) {
         logger.info("Attempting to delete file with ID: {}", fileId);
 
         Optional<File> fileEntity = fileRepository.findById(fileId);
@@ -233,6 +238,15 @@ public class FileService {
 
         fileRepository.delete(fileEntity.get());
         fileKeys.remove(fileId);
+
+        // Log audit event
+        Map<String, Object> auditEvent = new HashMap<>();
+        auditEvent.put("eventType", "FILE_DELETE");
+        auditEvent.put("userId", userId);
+        auditEvent.put("fileId", fileId);
+        auditEvent.put("timestamp", System.currentTimeMillis());
+        auditServiceClient.logAuditEvent(auditEvent);
+
         logger.info("File deleted successfully from database and Pinata");
     }
 }

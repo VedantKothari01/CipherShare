@@ -20,8 +20,6 @@ services:
       - "8761:8761"
     networks:
       - cipher-net
-    depends_on:
-      - mysql-db
 
   user-service:
     build: ./ciphershare-user-service
@@ -32,10 +30,6 @@ services:
     depends_on:
       - eureka-server
       - mysql-db
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/ciphershare?useSSL=false&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
 
   file-service:
     build: ./ciphershare-file-service
@@ -46,12 +40,6 @@ services:
     depends_on:
       - eureka-server
       - mysql-db
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/ciphershare?useSSL=false&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
-      - PINATA_API_KEY=5aaea962fac59a9278aa
-      - PINATA_API_SECRET=6b11e3f7925d623fedebb52ff2f3af514cec92eb3e757bebedeca1bed659c7ab
 
   audit-service:
     build: ./ciphershare-audit-service
@@ -62,10 +50,6 @@ services:
     depends_on:
       - eureka-server
       - mysql-db
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/ciphershare?useSSL=false&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
 
   sharing-service:
     build: ./ciphershare-sharing-service
@@ -76,10 +60,6 @@ services:
     depends_on:
       - eureka-server
       - mysql-db
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/ciphershare?useSSL=false&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
 
   api-gateway:
     build: ./ciphershare-api-gateway
@@ -96,6 +76,7 @@ services:
 
 networks:
   cipher-net:
+    driver: bridge
 
 volumes:
   mysql-data:
