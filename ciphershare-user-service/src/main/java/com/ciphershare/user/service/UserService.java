@@ -90,4 +90,13 @@ public class UserService implements UserDetailsService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
+    public User getUser(String userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public boolean checkUserExists(String userId) {
+        return userRepository.existsById(userId);
+    }
 }

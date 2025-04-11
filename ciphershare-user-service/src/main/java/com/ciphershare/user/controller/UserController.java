@@ -99,10 +99,8 @@ public class UserController {
         }
     )
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable String userId) {
-        Optional<User> user = userService.getUserById(userId);
-        return user.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<User> getUser(@PathVariable String userId) {
+        return ResponseEntity.ok(userService.getUser(userId));
     }
 
     @Operation(
@@ -168,5 +166,11 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable String userId) {
         userService.deleteUser(userId);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Check User Exists", description = "Checks if a user exists by ID.")
+    @GetMapping("/{userId}/exists")
+    public boolean checkUserExists(@PathVariable String userId) {
+        return userService.checkUserExists(userId);
     }
 }
