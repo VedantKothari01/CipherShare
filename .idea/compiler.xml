@@ -18,8 +18,8 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
         </processorPath>
         <module name="ciphershare-file-service" />
-        <module name="ciphershare-user-service" />
         <module name="ciphershare-audit-service" />
+        <module name="ciphershare-user-service" />
       </profile>
       <profile name="Annotation profile for ciphershare-sharing-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
