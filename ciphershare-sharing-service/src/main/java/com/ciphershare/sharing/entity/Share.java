@@ -54,4 +54,4 @@ public class Share {
     public void setActive(boolean active) {
         isActive = active;
     }
-} 
+}

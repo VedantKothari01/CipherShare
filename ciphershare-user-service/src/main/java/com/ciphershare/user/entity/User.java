@@ -17,6 +17,12 @@ import java.util.UUID;
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
+    public enum Role {
+        USER,
+        PREMIUM,
+        ADMIN
+    }
+
     @Id
     @Column(name = "user_id", nullable = false, updatable = false)
     private String userId = UUID.randomUUID().toString();
@@ -36,7 +42,7 @@ public class User implements UserDetails {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "role", nullable = false)
+    @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
 
@@ -59,11 +65,6 @@ public class User implements UserDetails {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    public enum Role {
-        USER,
-        ADMIN
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

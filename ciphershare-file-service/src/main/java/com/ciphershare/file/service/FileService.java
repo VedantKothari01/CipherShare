@@ -41,10 +41,10 @@ public class FileService {
     private final FileRepository fileRepository;
     private final ConcurrentHashMap<String, SecretKey> fileKeys = new ConcurrentHashMap<>();
 
-    @Value("${pinata.apiKey}")
+    @Value("${pinata.api.key}")
     private String pinataApiKey;
 
-    @Value("${pinata.apiSecret}")
+    @Value("${pinata.api.secret}")
     private String pinataApiSecret;
 
     private static final String PINATA_GATEWAY_URL = "https://gateway.pinata.cloud/ipfs/";

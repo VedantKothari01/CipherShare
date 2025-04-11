@@ -14,4 +14,4 @@ public interface ShareRepository extends JpaRepository<Share, String> {
     List<Share> findBySharedWithIdAndIsActiveTrue(String sharedWithId);
     Optional<Share> findByAccessTokenAndIsActiveTrue(String accessToken);
     boolean existsByFileIdAndSharedWithIdAndIsActiveTrue(String fileId, String sharedWithId);
-} 
+}

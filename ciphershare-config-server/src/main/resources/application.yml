@@ -8,7 +8,7 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/your-username/ciphershare-config
+          uri: https://github.com/VedantKothari01/ciphershare-config
           search-paths: '{application}'
           default-label: main
           clone-on-start: true
@@ -17,6 +17,6 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://discovery-service:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/
   instance:
     preferIpAddress: true 
