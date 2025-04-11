@@ -3,6 +3,8 @@ package com.ciphershare.user.controller;
 import com.ciphershare.user.entity.User;
 import com.ciphershare.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +21,26 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Operation(summary = "Register a new user", description = "Creates a new user account")
+    @Operation(
+        summary = "Register a new user", 
+        description = "Creates a new user account",
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(
+                mediaType = "application/json",
+                examples = @ExampleObject(
+                    value = """
+                    {
+                      "username": "johndoe",
+                      "email": "john@example.com",
+                      "password": "securepass123",
+                      "firstName": "John",
+                      "lastName": "Doe"
+                    }
+                    """
+                )
+            )
+        )
+    )
     @PostMapping("/register")
     public ResponseEntity<User> registerUser(@RequestBody User user) {
         return ResponseEntity.ok(userService.registerUser(user));

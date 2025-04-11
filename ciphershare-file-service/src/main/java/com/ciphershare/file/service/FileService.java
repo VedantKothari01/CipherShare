@@ -166,18 +166,6 @@ public class FileService {
         return result;
     }
 
-    private byte[] decryptFile(byte[] encryptedData, SecretKey key) throws Exception {
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        byte[] iv = new byte[16];
-        System.arraycopy(encryptedData, 0, iv, 0, iv.length);
-        
-        byte[] encrypted = new byte[encryptedData.length - iv.length];
-        System.arraycopy(encryptedData, iv.length, encrypted, 0, encrypted.length);
-        
-        cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
-        return cipher.doFinal(encrypted);
-    }
-
     @Retryable(
         value = {WebClientResponseException.class},
         maxAttempts = MAX_RETRIES,

@@ -1,10 +1,9 @@
-# Dockerfile
-
-FROM openjdk:23-slim
+FROM openjdk:21-slim
 WORKDIR /app
 
-# Copy only the final jar
+# Copy the JAR file
 COPY target/*.jar app.jar
 
-# Run the jar
+# Set the entrypoint to run the JAR directly
+EXPOSE 8081
 ENTRYPOINT ["java", "-jar", "app.jar"]

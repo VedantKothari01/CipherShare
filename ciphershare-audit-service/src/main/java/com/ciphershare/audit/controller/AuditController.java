@@ -3,6 +3,8 @@ package com.ciphershare.audit.controller;
 import com.ciphershare.audit.entity.BlockchainRecord;
 import com.ciphershare.audit.service.AuditService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +20,27 @@ public class AuditController {
     @Autowired
     private AuditService auditService;
 
-    @Operation(summary = "Log Audit Event", description = "Logs a new audit event with detailed information")
+    @Operation(
+        summary = "Log Audit Event", 
+        description = "Logs a new audit event with detailed information",
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(
+                mediaType = "application/json",
+                examples = @ExampleObject(
+                    value = """
+                    {
+                      "fileId": "file123",
+                      "userId": "user123",
+                      "action": "DOWNLOAD",
+                      "metadata": "Downloaded file: document.pdf",
+                      "ipAddress": "192.168.1.1",
+                      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+                    }
+                    """
+                )
+            )
+        )
+    )
     @PostMapping("/log")
     public ResponseEntity<BlockchainRecord> logEvent(@RequestBody AuditLogRequest request) {
         BlockchainRecord record = new BlockchainRecord();
@@ -31,19 +53,28 @@ public class AuditController {
         return ResponseEntity.ok(auditService.addRecord(record));
     }
 
-    @Operation(summary = "Get Audit Records by File ID", description = "Retrieves all audit records for a specific file")
+    @Operation(
+        summary = "Get Audit Records by File ID", 
+        description = "Retrieves all audit records for a specific file"
+    )
     @GetMapping("/records/file/{fileId}")
     public ResponseEntity<List<BlockchainRecord>> getRecordsByFileId(@PathVariable String fileId) {
         return ResponseEntity.ok(auditService.getRecordsByFileId(fileId));
     }
 
-    @Operation(summary = "Get Audit Records by User ID", description = "Retrieves all audit records for a specific user")
+    @Operation(
+        summary = "Get Audit Records by User ID", 
+        description = "Retrieves all audit records for a specific user"
+    )
     @GetMapping("/records/user/{userId}")
     public ResponseEntity<List<BlockchainRecord>> getRecordsByUserId(@PathVariable String userId) {
         return ResponseEntity.ok(auditService.getRecordsByUserId(userId));
     }
 
-    @Operation(summary = "Get Recent Audit Records", description = "Retrieves the most recent audit records")
+    @Operation(
+        summary = "Get Recent Audit Records", 
+        description = "Retrieves the most recent audit records"
+    )
     @GetMapping("/records/recent")
     public ResponseEntity<List<BlockchainRecord>> getRecentRecords(
             @RequestParam(defaultValue = "10") int limit) {
