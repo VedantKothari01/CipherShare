@@ -46,7 +46,6 @@ public class Share {
         ADMIN
     }
 
-    // Explicit getter and setter for isActive to fix Lombok issue
     public boolean isActive() {
         return isActive;
     }
