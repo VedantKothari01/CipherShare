@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface FileRepository extends JpaRepository<File, String> {
-    Optional<File> findByFileID(String fileID);  // Use fileID instead of CID
+    Optional<File> findByFileID(String fileID);
 }

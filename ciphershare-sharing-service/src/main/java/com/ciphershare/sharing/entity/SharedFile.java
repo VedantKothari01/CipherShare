@@ -3,6 +3,7 @@ package com.ciphershare.sharing.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -58,4 +59,7 @@ public class SharedFile {
     public void setAccessExpiry(LocalDateTime accessExpiry) {
         this.accessExpiry = accessExpiry;
     }
+
+
+
 }

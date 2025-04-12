@@ -30,7 +30,8 @@ public class FileController {
     @Operation(summary = "Get file URL", description = "Retrieves the IPFS URL for a file")
     @GetMapping("/url/{fileId}")
     public ResponseEntity<String> getFileUrl(
-            @Parameter(description = "ID of the file") @PathVariable String fileId) {
+            @Parameter(description = "ID of the file") @PathVariable("fileId") String fileId)
+    {
         String fileUrl = fileService.getFileUrl(fileId);
         return ResponseEntity.ok(fileUrl);
     }
@@ -38,7 +39,7 @@ public class FileController {
     @Operation(summary = "Delete a file", description = "Deletes a file from IPFS and removes metadata")
     @DeleteMapping("/{fileId}")
     public ResponseEntity<String> deleteFile(
-            @Parameter(description = "ID of the file to delete") @PathVariable String fileId) {
+            @Parameter(description = "ID of the file to delete") @PathVariable("fileId") String fileId) {
         try {
             fileService.deleteFile(fileId);
             return ResponseEntity.ok("File deleted successfully!");

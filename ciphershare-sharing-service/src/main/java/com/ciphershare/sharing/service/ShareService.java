@@ -1,10 +1,13 @@
 package com.ciphershare.sharing.service;
 
+import com.ciphershare.sharing.client.FileServiceClient;
+import com.ciphershare.sharing.client.UserServiceClient;
 import com.ciphershare.sharing.entity.Share;
 import com.ciphershare.sharing.repository.ShareRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,11 +20,24 @@ public class ShareService {
     @Autowired
     private ShareRepository repository;
 
+    @Autowired
+    private FileServiceClient fileServiceClient;
+
+    @Autowired
+    private UserServiceClient userServiceClient;
+
     @Transactional
     public Share createShare(String fileId, String ownerId, String sharedWithId, Share.Permission permission) {
-        // Check if share already exists
+        // Verify file exists
+        fileServiceClient.getFileUrl(fileId); // will throw if not found
+
+        // Verify user exists
+        if (!userServiceClient.checkUserExists(sharedWithId)) {
+            throw new IllegalArgumentException("Target user does not exist");
+        }
+
         if (repository.existsByFileIdAndSharedWithIdAndIsActiveTrue(fileId, sharedWithId)) {
-            throw new IllegalArgumentException("File is already shared with this user");
+            throw new IllegalArgumentException("File already shared with this user");
         }
 
         Share share = new Share();
@@ -29,7 +45,7 @@ public class ShareService {
         share.setOwnerId(ownerId);
         share.setSharedWithId(sharedWithId);
         share.setPermission(permission);
-        share.setAccessToken(generateAccessToken());
+        share.setAccessToken(UUID.randomUUID().toString());
         share.setActive(true);
 
         return repository.save(share);
@@ -41,19 +57,11 @@ public class ShareService {
                 .orElseThrow(() -> new IllegalArgumentException("Share not found"));
 
         if (!share.getOwnerId().equals(ownerId)) {
-            throw new SecurityException("Only the owner can revoke a share");
+            throw new SecurityException("Only the owner can revoke");
         }
 
         share.setActive(false);
         repository.save(share);
-    }
-
-    public List<Share> getSharesByFile(String fileId) {
-        return repository.findByFileIdAndIsActiveTrue(fileId);
-    }
-
-    public List<Share> getSharesByOwner(String ownerId) {
-        return repository.findByOwnerIdAndIsActiveTrue(ownerId);
     }
 
     public List<Share> getSharesByUser(String userId) {
@@ -62,9 +70,5 @@ public class ShareService {
 
     public Optional<Share> validateAccessToken(String accessToken) {
         return repository.findByAccessTokenAndIsActiveTrue(accessToken);
-    }
-
-    private String generateAccessToken() {
-        return UUID.randomUUID().toString();
     }
 }
