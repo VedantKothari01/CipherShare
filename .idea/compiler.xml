@@ -12,7 +12,18 @@
         <module name="ciphershare-api-gateway" />
         <module name="ciphershare-audit-service" />
       </profile>
-      <profile name="Annotation profile for ciphershare" enabled="true">
+      <profile name="Annotation profile for ciphershare-user-service" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
+        </processorPath>
+        <module name="ciphershare-file-service" />
+        <module name="ciphershare-user-service" />
+      </profile>
+      <profile name="Annotation profile for ciphershare-sharing-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -20,8 +31,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
         </processorPath>
         <module name="ciphershare-sharing-service" />
-        <module name="ciphershare-file-service" />
-        <module name="ciphershare-user-service" />
+        <module name="ciphershare" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -39,7 +49,7 @@
       <module name="ciphershare-discovery-service" options="-parameters" />
       <module name="ciphershare-eureka-server" options="-parameters" />
       <module name="ciphershare-file-service" options="" />
-      <module name="ciphershare-sharing-service" options="" />
+      <module name="ciphershare-sharing-service" options="-parameters" />
       <module name="ciphershare-sharing-service (1)" options="-parameters" />
       <module name="ciphershare-sharing-service (2)" options="-parameters" />
       <module name="ciphershare-user-service" options="-parameters" />

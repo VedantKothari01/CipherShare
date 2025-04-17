@@ -1,7 +1,7 @@
 package com.ciphershare.sharing.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -9,6 +9,10 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "shares")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Share {
     @Id
     @Column(name = "share_id", nullable = false, updatable = false)

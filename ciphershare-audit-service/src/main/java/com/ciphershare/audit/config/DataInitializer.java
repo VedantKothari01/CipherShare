@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Configuration
-@Profile("!prod") // Will not run in 'prod' profile
 public class DataInitializer implements CommandLineRunner {
 
     @Autowired
@@ -31,9 +30,9 @@ public class DataInitializer implements CommandLineRunner {
             );
 
             repository.saveAll(testData);
-            System.out.println("✅ Test audit data initialized.");
+            System.out.println("Test audit data initialized.");
         } else {
-            System.out.println("ℹ️ Test data already present. Skipping initialization.");
+            System.out.println("Test data already present. Skipping initialization.");
         }
     }
 

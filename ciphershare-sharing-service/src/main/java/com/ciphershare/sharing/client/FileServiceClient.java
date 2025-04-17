@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
-@FeignClient(name = "file-service")
+@FeignClient(name = "file-service", url = "http://localhost:8081")
 public interface FileServiceClient {
-    @GetMapping("/api/files/url/{fileId}")
-    String getFileUrl(@PathVariable("fileId") String fileId); // Specify the name of the path variable
+    @GetMapping("/api/files/url/{fileID}")
+    String getFileUrl(@PathVariable("fileID") String fileId);
 }

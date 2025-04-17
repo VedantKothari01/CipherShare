@@ -43,8 +43,7 @@ public class RateLimitingFilter extends AbstractGatewayFilterFactory<RateLimitin
     }
 
     public static class Config {
-        private int maxRequests = 100;
-        private int windowInSeconds = 60;
-        // getters/setters
+        private final int maxRequests = 100;
+        private final int windowInSeconds = 60;
     }
 }

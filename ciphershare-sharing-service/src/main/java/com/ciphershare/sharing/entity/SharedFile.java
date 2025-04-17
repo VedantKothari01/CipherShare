@@ -1,16 +1,24 @@
 package com.ciphershare.sharing.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
 @Entity
 @Table(name = "shared_files")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SharedFile {
     @Id
-    @Column(name = "share_id")
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "share_id", updatable = false, nullable = false)
     private String shareID;
 
     @Column(name = "file_id", nullable = false)
@@ -59,7 +67,6 @@ public class SharedFile {
     public void setAccessExpiry(LocalDateTime accessExpiry) {
         this.accessExpiry = accessExpiry;
     }
-
 
 
 }

@@ -18,7 +18,6 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // Create test admin user
         if (!userRepository.existsByUsername("admin")) {
             User admin = new User();
             admin.setUsername("admin");
@@ -30,7 +29,6 @@ public class DataInitializer implements CommandLineRunner {
             userRepository.save(admin);
         }
 
-        // Create test regular user
         if (!userRepository.existsByUsername("testuser")) {
             User testUser = new User();
             testUser.setUsername("testuser");
@@ -42,7 +40,6 @@ public class DataInitializer implements CommandLineRunner {
             userRepository.save(testUser);
         }
 
-        // Create test premium user
         if (!userRepository.existsByUsername("premium")) {
             User premiumUser = new User();
             premiumUser.setUsername("premium");

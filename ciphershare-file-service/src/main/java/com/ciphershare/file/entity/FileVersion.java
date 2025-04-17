@@ -14,7 +14,7 @@ public class FileVersion {
     @Column(name = "versionID", nullable = false, updatable = false)
     private String versionID = UUID.randomUUID().toString();
 
-    private String fileID; // foreign key to File
+    private String fileID;
     private int versionNumber;
 
     @CreationTimestamp

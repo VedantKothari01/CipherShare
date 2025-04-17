@@ -20,11 +20,9 @@ public class SharingService {
     private UserServiceClient userServiceClient;
 
     public SharedFile shareFile(SharedFile sharedFile) {
-        // Verify file exists
         fileServiceClient.getFileUrl(sharedFile.getFileID());
 
-        // Verify user exists
-        if (!userServiceClient.checkUserExists(sharedFile.getSharedWithUserID())) {
+        if (userServiceClient.checkUserExists(sharedFile.getSharedWithUserID())) {
             throw new RuntimeException("User does not exist");
         }
 
@@ -32,8 +30,7 @@ public class SharingService {
     }
 
     public List<SharedFile> getSharedFilesForUser(String userId) {
-        // Verify user exists
-        if (!userServiceClient.checkUserExists(userId)) {
+        if (userServiceClient.checkUserExists(userId)) {
             throw new RuntimeException("User does not exist");
         }
 
@@ -44,9 +41,8 @@ public class SharingService {
         SharedFile existing = sharedFileRepository.findById(shareID)
                 .orElseThrow(() -> new RuntimeException("Share record not found"));
 
-        // Verify user exists if changing shared user
         if (!existing.getSharedWithUserID().equals(updated.getSharedWithUserID())) {
-            if (!userServiceClient.checkUserExists(updated.getSharedWithUserID())) {
+            if (userServiceClient.checkUserExists(updated.getSharedWithUserID())) {
                 throw new RuntimeException("User does not exist");
             }
         }

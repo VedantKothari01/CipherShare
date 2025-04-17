@@ -23,7 +23,7 @@ import java.util.UUID;
 @Service
 public class FileService {
 
-    private static final Logger logger = LoggerFactory.getLogger(FileService.class);  // ✅ Logger Fix
+    private static final Logger logger = LoggerFactory.getLogger(FileService.class);
 
     private final WebClient webClient;
     private final FileRepository fileRepository;
@@ -65,7 +65,7 @@ public class FileService {
         String cid = jsonResponse.getString("IpfsHash");
 
         File newFile = new File();
-        newFile.setFileID(UUID.randomUUID().toString());  // Ensure ID is set
+        newFile.setFileID(UUID.randomUUID().toString());
         newFile.setFileName(file.getOriginalFilename());
         newFile.setFileType(file.getContentType());
         newFile.setFileSize(file.getSize());
@@ -111,7 +111,6 @@ public class FileService {
 
         String cid = fileEntity.get().getIpfsCid();
 
-        // Call Pinata API to delete the file
         webClient.delete()
                 .uri("/pinning/unpin/" + cid)
                 .header("pinata_api_key", pinataApiKey)
