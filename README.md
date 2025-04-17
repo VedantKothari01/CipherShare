@@ -5,6 +5,7 @@ CipherShare is a secure file sharing platform built using microservices architec
 ## Project Overview
 
 This project implements a robust and secure cloud storage system with a modular architecture using independent microservices for scalability and reliability. The system supports secure, decentralized storage and encrypted access for users, with each microservice handling a distinct domain (User, File, Sharing, and Audit).
+Compressed files for local dev: https://gofile.io/d/IZhDo3
 
 ## Current Status
 
